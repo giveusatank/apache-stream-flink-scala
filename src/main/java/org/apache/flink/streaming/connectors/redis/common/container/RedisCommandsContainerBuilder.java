@@ -79,7 +79,7 @@ public class RedisCommandsContainerBuilder {
 	 * @return container for Redis Cluster environment
 	 * @throws NullPointerException if jedisClusterConfig is null
 	 */
-	public static RedisCommandsContainer build(FlinkJedisClusterConfig jedisClusterConfig) {
+	/*public static RedisCommandsContainer build(FlinkJedisClusterConfig jedisClusterConfig) {
 		Preconditions.checkNotNull(jedisClusterConfig, "Redis cluster config should not be Null");
 
 		GenericObjectPoolConfig genericObjectPoolConfig = new GenericObjectPoolConfig();
@@ -90,7 +90,7 @@ public class RedisCommandsContainerBuilder {
 		JedisCluster jedisCluster = new JedisCluster(jedisClusterConfig.getNodes(), jedisClusterConfig.getConnectionTimeout(),
 			jedisClusterConfig.getMaxRedirections(), genericObjectPoolConfig);
 		return new RedisClusterContainer(jedisCluster);
-	}
+	}*/
 
 	/**
 	 * Builds container for Redis Sentinel environment.

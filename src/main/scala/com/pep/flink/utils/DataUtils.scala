@@ -1,7 +1,7 @@
 package com.pep.flink.utils
 
 import java.text.SimpleDateFormat
-import java.util.{Date, HashMap}
+import java.util.{Calendar, Date, HashMap}
 
 import com.pep.flink.bean.DataModel
 import com.pep.flink.common.Constants
@@ -88,7 +88,12 @@ object DataUtils {
   }
 
   def isNonEmpty(ele: String): Boolean = {
-    if (ele != null && !"".equals(ele) && !"null".equals(ele)) true else false
+    ele match {
+      case null => false
+      case "null" => false
+      case "" => false
+      case _ => true
+    }
   }
 
   def getRealName(deviceId:String,userId:String):String = {
@@ -98,30 +103,27 @@ object DataUtils {
   //获取指定时间批次的时间戳整形
   def queryTargetedBatchTimeStamp(current: Long, batchType: String): Long = {
     val cur = current / 1000
-    var mod: Long = 0L
-    var redisTime: Long = 0L
-    val format = new SimpleDateFormat("yyyyMMdd")
-    batchType match {
-      case "5s" => mod = cur % 5
-      case "hour" => mod = cur % 3600
-      case "day" => redisTime = format.parse(format.format(new Date(current))).getTime / 1000
+    val mod: Int = batchType match {
+      case "5s" => 5
+      case "10s" => 10
+      case "minute" => 60
+      case "hour" => 3600
     }
-    println(s"mod~~${mod}")
-    if("day".equals(batchType)){
-      redisTime
-    }else {
-      if (mod != 0){
-        (cur - mod)
-      } else cur
-    }
+    cur - (cur % mod)
   }
 
-  //判断两个时间戳的时间是否同属一天
-  def judgeTimeStampIsOneDay(dataTime:Long,stateTime:Long):Boolean ={
+  //获取今天的整点时间戳
+  def queryTodayTimeStamp(): String = {
     val format = new SimpleDateFormat("yyyyMMdd")
-    val dataTime_ = format.format(new Date(dataTime)).toLong
-    val stateTime_ = format.format(new Date(stateTime)).toLong
-    if(dataTime_ == stateTime_) true else if(dataTime_ == stateTime+1) false else false
+    (format.parse(format.format(new Date())).getTime / 1000 ).toString
+  }
+
+  // 获取当前一小时之前的秒级时间戳
+  def getLastHourSecondTS() : Long = {
+    val calendar = Calendar.getInstance()
+    calendar.setTime(new Date())
+    calendar.add(Calendar.HOUR,-1)
+   calendar.getTime.getTime / 1000
   }
 
   def getRedisConnect(): FlinkJedisPoolConfig = {
@@ -133,11 +135,24 @@ object DataUtils {
     val port = prop.getProperty("port").toInt
     val password = prop.getProperty("password")
     val databaseId = prop.getProperty("database").toInt
+    val timeOut = prop.getProperty("timeout").toInt
     new FlinkJedisPoolConfig.Builder().setHost(host).setMaxIdle(maxIdle).setMaxTotal(maxTotal)
-      .setMinIdle(minIdle).setPort(port).setPassword(password).setDatabase(databaseId).build()
+      .setMinIdle(minIdle).setPort(port).setPassword(password).setDatabase(databaseId).setTimeout(timeOut).build()
   }
 
   def main(args: Array[String]): Unit = {
-    println(judgeTimeStampIsOneDay(1578984539000L, 1578986669000L))
+    //println(judgeTimeStampIsOneDay(1578984539000L, 1578986669000L))
+    println(queryTodayTimeStamp)
+
+    println(isNonEmpty("null"))
+    println(isNonEmpty(""))
+    println(isNonEmpty(null))
+    println(isNonEmpty("123"))
+
+    println(queryTargetedBatchTimeStamp(1581782647461L,"5s"))
+    println(queryTargetedBatchTimeStamp(1581782647461L,"minute"))
+    println(queryTargetedBatchTimeStamp(1581782647461L,"hour"))
+
+    println(getLastHourSecondTS)
   }
 }

@@ -69,4 +69,14 @@ public interface RedisMapper<T> extends Function, Serializable {
 	 * 添加一个设置过期时间的方法，单位为秒
 	 */
 	int getRedisKeyExpireTime();
+
+	/**
+	 * 添加Pipeline获取数据方法一
+	 */
+	java.util.ArrayList<String> getPipelineArrayListFromData(T data, SinkFunction.Context context);
+
+	/**
+	 * 添加Pipeline获取数据方法二
+	 */
+	java.util.HashMap<java.lang.String,Double> getPipelineHashMapFromData(T data, SinkFunction.Context context);
 }

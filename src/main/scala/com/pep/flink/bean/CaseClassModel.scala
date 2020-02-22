@@ -1,6 +1,5 @@
 package com.pep.flink.bean
 
-import java.util
 
 case class DataModel(deviceId:String,
                      active_user:String,
@@ -18,6 +17,12 @@ case class ProvinceIndexModel(productId:String,province:String)
 
 case class ProductUvModel(productId:String,realUserId:String)
 
+case class ProductUvPiplineModel(productId:String,userArray:java.util.ArrayList[String])
+
+case class ProductUv(productId:String,uv:Long)
+
+case class ProductUvPipline(productId:String,userMap:java.util.HashMap[java.lang.String,java.lang.Double])
+
 case class ProductPvModel(productId:String,batchPv:String)
 
-case class PvValueState(productId:String,currentPv:Int,timeStamp:Long)
+case class PvValueState(productId:String,currentPv:Long)

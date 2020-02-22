@@ -1,5 +1,7 @@
 package com.pep.flink.sink
 
+import java.{lang, util}
+
 import com.pep.flink.bean.ProvinceIndexModel
 import com.pep.flink.utils.{DataUtils, RedisPropertyUtils}
 import org.apache.flink.streaming.api.functions.sink.SinkFunction
@@ -19,9 +21,7 @@ class ProdProvinceUvIndexRedisMapper(expire: Long) extends RedisMapper[ProvinceI
 
   override def getKeyFromData(data: ProvinceIndexModel, context: SinkFunction.Context[_]): String = {
     val processTime = context.currentProcessingTime
-    println(s"index1~~${processTime}")
     val timeKey = DataUtils.queryTargetedBatchTimeStamp(processTime,"5s")
-    println(s"index2~~${timeKey}")
     val prefix = RedisPropertyUtils.getRedisProperty.getProperty("product_province_uv_5s_index")
     s"${data.productId}:${prefix}:${timeKey}"
   }
@@ -39,4 +39,14 @@ class ProdProvinceUvIndexRedisMapper(expire: Long) extends RedisMapper[ProvinceI
     * 添加一个设置过期时间的方法，单位为秒
     */
   override def getRedisKeyExpireTime: Int = expire.toInt
+
+  /**
+    * 添加Pipeline获取数据方法一
+    */
+  override def getPipelineArrayListFromData(data: ProvinceIndexModel, context: SinkFunction.Context[_]): util.ArrayList[String] = null
+
+  /**
+    * 添加Pipeline获取数据方法二
+    */
+  override def getPipelineHashMapFromData(data: ProvinceIndexModel, context: SinkFunction.Context[_]): util.HashMap[String, lang.Double] = null
 }

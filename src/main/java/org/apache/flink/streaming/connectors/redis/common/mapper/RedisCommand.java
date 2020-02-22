@@ -64,7 +64,19 @@ public enum RedisCommand {
 	 * Sets field in the hash stored at key to value. If key does not exist,
 	 * a new key holding a hash is created. If field already exists in the hash, it is overwritten.
 	 */
-	HSET(RedisDataType.HASH);
+	HSET(RedisDataType.HASH),
+
+
+	/**
+	 * 自己添加的RedisCommand
+	 * 用于先执行zadd操作，然后删除一小时之外数据，然后求zcount，然后存入string的过程
+	 */
+	ZSETSCORE(RedisDataType.ZSET),
+
+	/**
+	 * 使用Pipline的方式使用SADD
+	 */
+	PIPLINESADD(RedisDataType.PIPLINESADD);
 
 	/**
 	 * The {@link RedisDataType} this command belongs to.
@@ -83,4 +95,7 @@ public enum RedisCommand {
 	public RedisDataType getRedisDataType(){
 		return redisDataType;
 	}
+
+
+
 }

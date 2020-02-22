@@ -18,6 +18,8 @@ package org.apache.flink.streaming.connectors.redis.common.container;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * The container for all available Redis commands.
@@ -100,6 +102,18 @@ public interface RedisCommandsContainer extends Serializable {
 	void zadd(String key, String score, String element);
 
 	void setExpireTime(String key, int expireTime);
+
+	void zremByScoreRange(String key,Long minTs,Long maxTs);
+
+	Long zcard(String key);
+
+	void pipelineSadd(String key, ArrayList<String> arrayList);
+
+	void pipelineZadd(String key, HashMap<String,Double> maps);
+
+	String get(String key);
+
+	boolean exists(String key);
 
 	/**
 	 * Close the Jedis container.

@@ -62,5 +62,9 @@ public enum RedisDataType {
 	 * Subscribers express interest in one or more channels, and only receive messages
 	 * that are of interest, without knowledge of what (if any) publishers there are.
 	 */
-	PUBSUB
+	PUBSUB,
+
+	ZSET,
+
+	PIPLINESADD
 }
